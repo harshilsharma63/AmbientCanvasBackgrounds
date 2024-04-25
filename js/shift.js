@@ -1,19 +1,19 @@
 'use strict';
 
-const circleCount = 150;
+const circleCount = 21;
 const circlePropCount = 8;
 const circlePropsLength = circleCount * circlePropCount;
-const baseSpeed = 0.1;
+const baseSpeed = 1;
 const rangeSpeed = 1;
 const baseTTL = 150;
 const rangeTTL = 200;
-const baseRadius = 100;
-const rangeRadius = 200;
+const baseRadius = 800;
+const rangeRadius = 300;
 const rangeHue = 60;
 const xOff = 0.0015;
 const yOff = 0.0015;
 const zOff = 0.0015;
-const backgroundColor = 'hsla(0,0%,5%,1)';
+const backgroundColor = 'black';
 
 let container;
 let canvas;
@@ -52,6 +52,9 @@ function initCircle(i) {
   speed = baseSpeed + rand(rangeSpeed);
   vx = speed * cos(t);
   vy = speed * sin(t);
+
+
+
   life = 0;
   ttl = baseTTL + rand(rangeTTL);
   radius = baseRadius + rand(rangeRadius);
@@ -85,23 +88,53 @@ function updateCircle(i) {
 
   drawCircle(x, y, life, ttl, radius, hue);
 
-  life++;
+  // life++;
 
   circleProps[i] = x + vx;
   circleProps[i2] = y + vy;
+
   circleProps[i5] = life;
 
-  (checkBounds(x, y, radius) || life > ttl) && initCircle(i);
+  // (checkBounds(x, y, radius) || life > ttl) && initCircle(i);
 }
 
 function drawCircle(x, y, life, ttl, radius, hue) {
   ctx.a.save();
-  ctx.a.fillStyle = `hsla(${hue},60%,30%,${fadeInOut(life,ttl)})`;
-  ctx.a.beginPath();
-  ctx.a.arc(x,y, radius, 0, TAU);
-  ctx.a.fill();
-  ctx.a.closePath();
+  // ctx.a.fillStyle = `hsla(${hue},60%,30%,${fadeInOut(life,ttl)})`;
+  // ctx.a.fillStyle = `hsla(${hue},60%,30%)`;
+  ctx.a.fillStyle = `#0055FF`;
+  // ctx.a.beginPath();
+  // ctx.a.arc(x,y, radius, 0, TAU);
+  // ctx.a.fill();
+  // ctx.a.closePath();
+  drawIsoscelesTriangle(ctx.a, radius, x, y)
   ctx.a.restore();
+}
+
+
+function drawIsoscelesTriangle(ctx, length, centerX, centerY) {
+  // Calculate the coordinates of the triangle vertices
+  const halfBase = length / 2;
+  const topVertexY = centerY - Math.sqrt(3) / 2 * length;
+  const leftVertexX = centerX - halfBase;
+  const rightVertexX = centerX + halfBase;
+
+  // Start drawing the path
+  ctx.beginPath();
+
+  // Move to the top vertex
+  ctx.moveTo(centerX, topVertexY);
+
+  // Draw the base
+  ctx.lineTo(leftVertexX, centerY);
+  ctx.lineTo(rightVertexX, centerY);
+
+  // Close the path
+  ctx.closePath();
+
+  // Stroke or fill the triangle as needed
+  // ctx.stroke(); // Uncomment this line to stroke the triangle
+  ctx.fill(); // Uncomment this line to fill the triangle
 }
 
 function checkBounds(x, y, radius) {
@@ -149,7 +182,7 @@ function resize() {
 
 function render() {
   ctx.b.save();
-  ctx.b.filter = 'blur(50px)';
+  ctx.b.filter = 'blur(150px)';
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 }
